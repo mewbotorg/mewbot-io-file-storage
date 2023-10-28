@@ -1,1 +1,9 @@
+# SPDX-FileCopyrightText: 2023 Mewbot Developers <mewbot@quicksilver.london>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+-r requirements.txt
+
+mewbot-dev-tools~=0.0.15
+
 types-aiofiles~=23.2.0

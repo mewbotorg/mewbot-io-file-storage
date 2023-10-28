@@ -1,1 +1,1 @@
-LICENSES/MIT.txt
+LICENSES/BSD-2-Clause.txt
