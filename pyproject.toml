@@ -30,6 +30,9 @@ ignore-self-only-init=true
 
 disable=[]
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [tool.coverage.run]
 
 branch=true
@@ -52,3 +55,6 @@ sections = ['FUTURE', 'TYPING', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLD
 known_typing = ["typing", "types", "collections.abc"]
 # 9 is black compatible, bu does not look great
 multi_line_output = 3
+
+[tool.bandit]
+exclude_dirs=["tests"]

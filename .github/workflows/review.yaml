@@ -6,7 +6,9 @@ name: Auto-Review
 run-name: "Automated code review for \"${{ github.head_ref }}\""
 
 on:
-  push: # All pushes
+  push:
+    branches:
+      - main
   pull_request: # All pull requests
 
 concurrency:
@@ -64,7 +66,7 @@ jobs:
           PYTHONPATH="$(python -m mewbot_dev_tools.path)"
           readonly PYTHONPATH
           export PYTHONPATH
-          
+
           mewbot-${{ matrix.name }}
 
       - name: Upload Artifacts
