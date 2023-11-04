@@ -17,15 +17,15 @@ from aiofiles.threadpool.binary import AsyncBufferedIOBase as BytesIOBase
 from aiofiles.threadpool.text import AsyncTextIOWrapper as TextIOBase
 
 # Hideous hack to make mypy "happy"
+fcntl: Optional[ModuleType] = None
+
 if not TYPE_CHECKING:
-    FCNTL_INSTALLED = None
     try:
-        import fcntl as FCNTL_INSTALLED
+        import fcntl as _fcntl
+
+        fcntl = _fcntl
     except ModuleNotFoundError:
-        fcntl: Optional[ModuleType] = None
-    fcntl = FCNTL_INSTALLED
-else:
-    fcntl: Optional[ModuleType] = None
+        pass
 
 FCNTL = globals()["fcntl"]
 
