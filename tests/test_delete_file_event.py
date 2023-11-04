@@ -46,7 +46,7 @@ class TestDeleteFileOutputEventHandling(FileStorageTestFixture):
 
             assert len(caplog.records) == 1
             assert logging.WARNING == caplog.records[0].levelno
-            assert "Unable to delete non-existent path %s" in caplog.records[0].msg
+            assert "Unable to delete %s - FileNotFoundError" in caplog.records[0].msg
 
     async def test_output_unlink_file(self) -> None:
         """
@@ -103,6 +103,6 @@ class TestDeleteFileOutputEventHandling(FileStorageTestFixture):
                 assert not await output.output(event)
 
             assert len(caplog.records) == 1
-            assert "Unable to delete non-existent path %s" in caplog.records[0].msg
+            assert "Unable to delete %s - FileNotFoundError" in caplog.records[0].msg
             assert logging.WARNING == caplog.records[0].levelno
             assert not os.path.exists(file_path)

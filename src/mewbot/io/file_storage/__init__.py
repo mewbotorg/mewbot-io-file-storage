@@ -198,8 +198,7 @@ class FileStorageOutput(Output):
 
         return await future
 
-    @staticmethod
-    async def _process_directory_create_event(path: pathlib.Path) -> bool:
+    async def _process_directory_create_event(self, path: pathlib.Path) -> bool:
         """
         Create the given directory (and any parent directories).
         """
@@ -207,6 +206,7 @@ class FileStorageOutput(Output):
         try:
             path.mkdir(parents=True, exist_ok=True)
         except PermissionError:
+            self._logger.warning("Unable to create directory %s - PermissionError", path)
             return False
 
         return True
@@ -239,8 +239,10 @@ class FileStorageOutput(Output):
 
             return True
         except FileExistsError:
+            self._logger.warning("Unable to write file %s - FileExistsError", path)
             return False
         except PermissionError:
+            self._logger.warning("Unable to write file %s - PermissionError", path)
             return False
 
     @staticmethod
@@ -263,19 +265,13 @@ class FileStorageOutput(Output):
         try:
             path.unlink()
         except FileNotFoundError:
-            self._logger.warning(
-                "Unable to delete non-existent path %s - FileNotFoundError", path
-            )
+            self._logger.warning("Unable to delete %s - FileNotFoundError", path)
             return False
         except PermissionError:
-            self._logger.warning(
-                "Unable to delete non-existent path %s - PermissionError", path
-            )
+            self._logger.warning("Unable to delete %s - PermissionError", path)
             return False
         except IsADirectoryError:
-            self._logger.warning(
-                "Unable to delete non-existent path %s - IsADirectoryError", path
-            )
+            self._logger.warning("Unable to delete %s - IsADirectoryError", path)
             return False
 
         return True
