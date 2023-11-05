@@ -36,30 +36,6 @@ class FileStorageTestFixture:
     output: FileStorageOutput
     logger: logging.Logger
 
-    # bandit objects to mktemp calls - isolating each tests case in it's own tempdir seemed
-    # cleanest as a way of getting rid of them.
-    # @classmethod
-    # def setup_class(cls) -> None:
-    #     """
-    #     Set up an environment for the test run.
-    #
-    #     This class tests the behaviours of the CreateDirectoryOutputEvent.
-    #     """
-    #
-    #     cls.temp_dir = tempfile.TemporaryDirectory()  # pylint: disable=consider-using-with
-    #     cls.path = cls.temp_dir.name
-    #     cls.io_config = FileStorage(path=cls.path)
-    #     cls.output = cls.io_config.get_outputs()[0]
-    #     # noinspection PyProtectedMember
-    #     cls.logger = cls.output._logger  # pylint: disable=protected-access
-
-    # @classmethod
-    # def teardown_class(cls) -> None:
-    #     """
-    #     Clean up the temporary directory from this test run.
-    #     """
-    #     cls.temp_dir.cleanup()
-
     @staticmethod
     def prepare_io_config(tmp_dir: str) -> tuple[FileStorage, FileStorageOutput]:
         """

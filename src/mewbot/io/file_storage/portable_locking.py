@@ -14,18 +14,18 @@ import functools
 
 import portalocker
 from aiofiles.threadpool.binary import AsyncBufferedIOBase as BytesIOBase
-from aiofiles.threadpool.text import AsyncTextIOWrapper as TestIOBase
+from aiofiles.threadpool.text import AsyncTextIOWrapper as TextIOBase
 
 # Hideous hack to make mypy "happy"
+fcntl: Optional[ModuleType] = None
+
 if not TYPE_CHECKING:
-    FCNTL_INSTALLED = None
     try:
-        import fcntl as FCNTL_INSTALLED
+        import fcntl as _fcntl
+
+        fcntl = _fcntl
     except ModuleNotFoundError:
-        fcntl: Optional[ModuleType] = None
-    fcntl = FCNTL_INSTALLED
-else:
-    fcntl: Optional[ModuleType] = None
+        pass
 
 FCNTL = globals()["fcntl"]
 
@@ -38,15 +38,6 @@ class FileHandlePortalocker(portalocker.Lock):
     """
 
     _internal_fh: IO[bytes] | IO[str]
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """
-        Stores the file handle to return inplace of the new one portalocker usually creates.
-
-        :param args:
-        :param kwargs:
-        """
-        super().__init__(*args, **kwargs)
 
     def set_internal_fh(self, file_handle: IO[bytes] | IO[str]) -> None:
         """
@@ -83,12 +74,12 @@ class FcntlAsyncFileLock:
     thread, and wait up to the timeout to return.
     """
 
-    _file: TestIOBase | BytesIOBase
+    _file: TextIOBase | BytesIOBase
     _timeout: float
 
     fcntl: Optional[ModuleType]
 
-    def __init__(self, file: TestIOBase | BytesIOBase, timeout: float = 5) -> None:
+    def __init__(self, file: TextIOBase | BytesIOBase, timeout: float = 5) -> None:
         """
         Asynchronous context-manager for locking a file descriptor with fcntl.
 
@@ -150,11 +141,11 @@ class PortaLockerAsyncFileLock:
     thread, and wait up to the timeout to return.
     """
 
-    _file: TestIOBase | BytesIOBase
+    _file: TextIOBase | BytesIOBase
     _timeout: float
     _lock: FileHandlePortalocker
 
-    def __init__(self, file: TestIOBase | BytesIOBase, timeout: float = 5) -> None:
+    def __init__(self, file: TextIOBase | BytesIOBase, timeout: float = 5) -> None:
         """
         Asynchronous context-manager for locking a file descriptor with fcntl.
 
@@ -189,9 +180,7 @@ class PortaLockerAsyncFileLock:
         Acquire an exclusive a lock on the current file descriptor.
         """
         # From the examples - portalocker.lock(file, portalocker.LockFlags.EXCLUSIVE)
-        call = functools.partial(
-            self._lock.acquire,
-        )
+        call = functools.partial(self._lock.acquire, portalocker.LOCK_EX)
         loop = asyncio.get_running_loop()
         future = loop.run_in_executor(None, call)
 
