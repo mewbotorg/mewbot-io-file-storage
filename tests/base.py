@@ -29,6 +29,7 @@ class FileStorageTestFixture:
     ERROR_MESSAGE_OUTSIDE_BASE_PATH = (
         "Refusing to write to %s, as it would result in a file outside of %s"
     )
+    ERROR_MESSAGE_BAD_ROOT_LOC = "Cannot output - base path '%s' does not exist"
 
     temp_dir: tempfile.TemporaryDirectory[str]
     path: str

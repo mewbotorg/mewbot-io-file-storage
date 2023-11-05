@@ -208,6 +208,9 @@ class FileStorageOutput(Output):
         except PermissionError:
             self._logger.warning("Unable to create directory %s - PermissionError", path)
             return False
+        # Can happen when you try to e.g. overwrite a folder
+        except FileExistsError:
+            return False
 
         return True
 
