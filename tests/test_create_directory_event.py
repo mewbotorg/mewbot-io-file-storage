@@ -12,7 +12,6 @@ This class tests the behaviours of the WriteToFileOutputEvent.
 """
 
 import os
-import pathlib
 import sys
 import tempfile
 import uuid
@@ -210,9 +209,7 @@ class TestCreateDirectoryOutputEventHandling(FileStorageTestFixture):
             assert not os.path.exists(test_dir_path)
             assert not os.path.isdir(test_dir_path)
 
-    @pytest.mark.skipif(
-        sys.platform.lower().startswith("win"), reason="Linux only test"
-    )
+    @pytest.mark.skipif(sys.platform.lower().startswith("win"), reason="Linux only test")
     async def test_create_dir_outside_dir_path_linux(self) -> None:
         """
         File storage test case: Attempt to create a dir outside the target dir.

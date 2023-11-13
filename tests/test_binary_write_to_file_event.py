@@ -11,6 +11,8 @@ Tests for 'file_storage' IO module, used for writing to the file system.
 This class tests the behaviours of the WriteToFileOutputEvent - in binary write mode.
 """
 
+# pylint: disable=duplicate-code
+
 import logging
 import os
 import sys

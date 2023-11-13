@@ -12,12 +12,9 @@ This class tests the behaviours of the WriteToFileOutputEvent and CreateDirector
 In particular, when we attempt to output to a directory which does not exist.
 """
 
-import os
 import logging
-import pathlib
-import sys
+import os
 import tempfile
-import uuid
 
 import pytest
 
@@ -187,7 +184,9 @@ class TestCreateFileOutputEventHandlingBadRootLoc(FileStorageTestFixture):
 
         assert not os.path.exists(file_path)
 
-    async def test_output_write_file_relative_bad_root_loc(self, caplog: pytest.LogCaptureFixture) -> None:
+    async def test_output_write_file_relative_bad_root_loc(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """
         File Storage test case: Use a relative path to try writing outside the output folder.
         """

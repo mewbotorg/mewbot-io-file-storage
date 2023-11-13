@@ -12,8 +12,8 @@ This class tests the behaviours of the output when permission error occur.
 
 import logging
 import os
-import tempfile
 import sys
+import tempfile
 
 import pytest
 
