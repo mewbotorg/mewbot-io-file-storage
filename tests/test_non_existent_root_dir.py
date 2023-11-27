@@ -12,8 +12,12 @@ This class tests the behaviours of the WriteToFileOutputEvent and CreateDirector
 In particular, when we attempt to output to a directory which does not exist.
 """
 
+# Need some very similar code to test behavior on windows and linux systems
+# pylint: disable=duplicate-code
+
 import logging
 import os
+import sys
 import tempfile
 
 import pytest
@@ -93,7 +97,67 @@ class TestCreateDirectoryOutputEventHandlingBadRootLoc(FileStorageTestFixture):
         assert not os.path.exists(file_path)
         assert not os.path.isdir(file_path)
 
-    async def test_output_create_parent_dir_outside_bad_dir(self) -> None:
+    @pytest.mark.skipif(
+        not sys.platform.lower().startswith("win"), reason="Windows only test"
+    )
+    async def test_output_create_dir_nonsense_path_windows(self) -> None:
+        """
+        File Storage test case: Attempt to create a dir at a nonsense path.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir_path:
+            _, output = self.prepare_io_config(tmp_dir_path)
+
+            test_dir_path = os.path.join(
+                tmp_dir_path, "F:\\//utter_nonsense\\////\\//should not work"
+            )
+
+            event = CreateDirectoryOutputEvent(path=test_dir_path)
+            assert not await output.output(event)
+
+            assert not os.path.exists(test_dir_path)
+            assert not os.path.isdir(test_dir_path)
+
+    @pytest.mark.skipif(sys.platform.lower().startswith("win"), reason="Linux only test")
+    async def test_output_create_dir_nonsense_path_linux(self) -> None:
+        """
+        File Storage test case: Attempt to create a dir at a nonsense path.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir_path:
+            _, output = self.prepare_io_config(tmp_dir_path)
+
+            test_dir_path = os.path.join(
+                tmp_dir_path, "F:\\//utter_nonsense\\////\\//should not work"
+            )
+
+            event = CreateDirectoryOutputEvent(path=test_dir_path)
+            assert await output.output(event)
+
+            assert os.path.exists(test_dir_path)
+            assert os.path.isdir(test_dir_path)
+
+    async def test_output_create_parent_dir_outside_bad_dir_windows(self) -> None:
+        """
+        File Storage test case: Relative path which points to the parent.
+        """
+
+        # Get a plausible looking dir for the system to test with
+        with tempfile.TemporaryDirectory() as bad_tmp_path:
+            pass
+
+        _, output = self.prepare_io_config(bad_tmp_path)
+
+        file_path = bad_tmp_path + "/.."
+
+        assert os.path.exists(file_path)
+
+        event = CreateDirectoryOutputEvent(path=file_path)
+        assert not await output.output(event)
+
+        # The parent already existed
+        assert os.path.exists(file_path)
+        assert os.path.isdir(file_path)
+
+    async def test_output_create_parent_dir_outside_bad_dir_linux(self) -> None:
         """
         File Storage test case: Relative path which points to the parent.
         """

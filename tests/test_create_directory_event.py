@@ -153,9 +153,14 @@ class TestCreateDirectoryOutputEventHandling(FileStorageTestFixture):
             assert os.path.exists(test_file_path)
             assert os.path.isfile(test_file_path)
 
-    async def test_output_create_dir_nonsense_path(self) -> None:
+    @pytest.mark.skipif(
+        not sys.platform.lower().startswith("win"), reason="Windows only test"
+    )
+    async def test_output_create_dir_nonsense_path_windows(self) -> None:
         """
-        File Storage test case: Attempt to create a dir at a nonsense path.
+        File Storage test case: Attempt to create a dir at a nonsense path for windows.
+
+        Should fail to create.
         """
         with tempfile.TemporaryDirectory() as tmp_dir_path:
             _, output = self.prepare_io_config(tmp_dir_path)
@@ -169,6 +174,26 @@ class TestCreateDirectoryOutputEventHandling(FileStorageTestFixture):
 
             assert not os.path.exists(test_dir_path)
             assert not os.path.isdir(test_dir_path)
+
+    @pytest.mark.skipif(sys.platform.lower().startswith("win"), reason="Linux only test")
+    async def test_output_create_dir_nonsense_path_linux(self) -> None:
+        """
+        File Storage test case: Attempt to create a dir at a nonsense path for windows.
+
+        Should be valid on linux.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir_path:
+            _, output = self.prepare_io_config(tmp_dir_path)
+
+            test_dir_path = os.path.join(
+                tmp_dir_path, "F:\\//utter_nonsense\\////\\//should not work"
+            )
+
+            event = CreateDirectoryOutputEvent(path=test_dir_path)
+            assert await output.output(event)
+
+            assert os.path.exists(test_dir_path)
+            assert os.path.isdir(test_dir_path)
 
     @pytest.mark.skipif(
         not sys.platform.lower().startswith("win"), reason="Windows only test"
