@@ -135,6 +135,9 @@ class TestCreateDirectoryOutputEventHandlingBadRootLoc(FileStorageTestFixture):
             assert os.path.exists(test_dir_path)
             assert os.path.isdir(test_dir_path)
 
+    @pytest.mark.skipif(
+        not sys.platform.lower().startswith("win"), reason="Windows only test"
+    )
     async def test_output_create_parent_dir_outside_bad_dir_windows(self) -> None:
         """
         File Storage test case: Relative path which points to the parent.
@@ -157,6 +160,7 @@ class TestCreateDirectoryOutputEventHandlingBadRootLoc(FileStorageTestFixture):
         assert os.path.exists(file_path)
         assert os.path.isdir(file_path)
 
+    @pytest.mark.skipif(sys.platform.lower().startswith("win"), reason="Linux only test")
     async def test_output_create_parent_dir_outside_bad_dir_linux(self) -> None:
         """
         File Storage test case: Relative path which points to the parent.
@@ -170,14 +174,14 @@ class TestCreateDirectoryOutputEventHandlingBadRootLoc(FileStorageTestFixture):
 
         file_path = bad_tmp_path + "/.."
 
-        assert os.path.exists(file_path)
+        assert not os.path.exists(file_path)
 
         event = CreateDirectoryOutputEvent(path=file_path)
         assert not await output.output(event)
 
         # The parent already existed
-        assert os.path.exists(file_path)
-        assert os.path.isdir(file_path)
+        assert not os.path.exists(file_path)
+        assert not os.path.isdir(file_path)
 
 
 class TestCreateFileOutputEventHandlingBadRootLoc(FileStorageTestFixture):
