@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-mewbot~=0.0.3
 mewbot-api~=0.0.3
-mewbot-io~=0.0.3
-mewbot-test~=0.0.3
+
+aiofiles~=23.2.1
+portalocker~=2.8.2

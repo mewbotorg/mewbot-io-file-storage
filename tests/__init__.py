@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-# -*- coding: utf-8 -*-
-
 """
-Contains tests for mewbot-file-storage.
+Tests for the mewbot-io-file-storage module.
 """
